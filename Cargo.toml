@@ -1,0 +1,58 @@
+[package]
+name = "robochain"
+version = "0.1.0"
+edition = "2021"
+description = "A specialized L1 blockchain for home robot coordination"
+license = "MIT"
+
+[dependencies]
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+borsh = { version = "1.0", features = ["derive"] }
+
+# Cryptography
+sha2 = "0.10"
+ed25519-dalek = { version = "2.0", features = ["serde", "rand_core"] }
+rand = "0.8"
+rand_core = "0.6"
+hex = "0.4"
+serde_bytes = "0.11"
+
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+async-trait = "0.1"
+
+# Storage (rocksdb optional, use memory store for now)
+# rocksdb = "0.21"
+
+# Utilities
+thiserror = "1.0"
+anyhow = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+parking_lot = "0.12"
+dashmap = "5.5"
+petgraph = "0.6"
+rayon = "1.8"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Web server (explorer)
+axum = "0.7"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "fs"] }
+mime_guess = "2.0"
+
+[dev-dependencies]
+tempfile = "3.0"
+
+[lib]
+name = "robochain"
+path = "src/lib.rs"
+
+[[bin]]
+name = "robochain-node"
+path = "src/main.rs"

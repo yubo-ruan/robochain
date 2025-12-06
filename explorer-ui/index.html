@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboChain Explorer</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent: #58a6ff;
+            --accent-hover: #79b8ff;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .section-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .section-link:hover {
+            color: var(--accent-hover);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        .hash {
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--accent);
+        }
+
+        .hash:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(63, 185, 80, 0.2);
+            color: var(--success);
+        }
+
+        .badge-pending {
+            background: rgba(210, 153, 34, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(248, 81, 73, 0.2);
+            color: var(--error);
+        }
+
+        .time-ago {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                order: 3;
+                max-width: 100%;
+                width: 100%;
+                margin-top: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">Robo<span>Chain</span> Explorer</a>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search by block height, tx hash, robot ID...">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Stats -->
+        <div class="stats-grid" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-blocks">-</div>
+                <div class="stat-label">Blocks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-txs">-</div>
+                <div class="stat-label">Transactions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-robots">-</div>
+                <div class="stat-label">Robots</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-spaces">-</div>
+                <div class="stat-label">Spaces</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-tasks">-</div>
+                <div class="stat-label">Active Tasks</div>
+            </div>
+        </div>
+
+        <!-- Recent Blocks -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Blocks</h2>
+                <a href="#" class="section-link">View all</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Height</th>
+                        <th>Hash</th>
+                        <th>Txns</th>
+                        <th>Gas</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="blocks-table">
+                    <tr>
+                        <td colspan="5" class="loading">
+                            <div class="spinner"></div>
+                            Loading blocks...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Recent Tasks -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Tasks</h2>
+                <a href="#" class="section-link">View all</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Reward</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody id="tasks-table">
+                    <tr>
+                        <td colspan="5" class="loading">
+                            <div class="spinner"></div>
+                            Loading tasks...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        // API base URL
+        const API_BASE = '/api/v1';
+
+        // Utility functions
+        function formatNumber(n) {
+            if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+            if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+            return n.toString();
+        }
+
+        function truncateHash(hash, len = 8) {
+            if (!hash || hash.length <= len * 2) return hash;
+            return hash.slice(0, len) + '...' + hash.slice(-len);
+        }
+
+        function timeAgo(timestamp) {
+            const seconds = Math.floor(Date.now() / 1000 - timestamp);
+            if (seconds < 60) return seconds + 's ago';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            return Math.floor(seconds / 86400) + 'd ago';
+        }
+
+        function statusBadge(status) {
+            const s = status.toLowerCase();
+            if (s === 'completed' || s === 'active') return 'badge-success';
+            if (s === 'posted' || s === 'accepted' || s === 'inprogress') return 'badge-pending';
+            return 'badge-error';
+        }
+
+        // Fetch and render stats
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API_BASE}/stats`);
+                const stats = await res.json();
+
+                document.getElementById('stat-blocks').textContent = formatNumber(stats.total_blocks);
+                document.getElementById('stat-txs').textContent = formatNumber(stats.total_transactions);
+                document.getElementById('stat-robots').textContent = formatNumber(stats.total_robots);
+                document.getElementById('stat-spaces').textContent = formatNumber(stats.total_spaces);
+                document.getElementById('stat-tasks').textContent = formatNumber(stats.active_tasks);
+            } catch (e) {
+                console.error('Failed to load stats:', e);
+            }
+        }
+
+        // Fetch and render blocks
+        async function loadBlocks() {
+            const tbody = document.getElementById('blocks-table');
+            try {
+                const res = await fetch(`${API_BASE}/blocks?limit=10`);
+                const blocks = await res.json();
+
+                if (blocks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No blocks yet</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = blocks.map(b => `
+                    <tr>
+                        <td><strong>${b.height}</strong></td>
+                        <td><span class="hash">${truncateHash(b.hash)}</span></td>
+                        <td>${b.tx_count}</td>
+                        <td>${formatNumber(b.total_gas)}</td>
+                        <td class="time-ago">${timeAgo(b.timestamp)}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load blocks:', e);
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Failed to load blocks</td></tr>';
+            }
+        }
+
+        // Fetch and render tasks
+        async function loadTasks() {
+            const tbody = document.getElementById('tasks-table');
+            try {
+                const res = await fetch(`${API_BASE}/tasks`);
+                const tasks = await res.json();
+
+                if (tasks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No tasks yet</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = tasks.slice(0, 10).map(t => `
+                    <tr>
+                        <td><span class="hash">${truncateHash(t.id)}</span></td>
+                        <td>${t.description.slice(0, 50)}${t.description.length > 50 ? '...' : ''}</td>
+                        <td><span class="badge ${statusBadge(t.status)}">${t.status}</span></td>
+                        <td>${(t.reward / 1000000).toFixed(2)} ROUSD</td>
+                        <td class="time-ago">${timeAgo(t.created_at)}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load tasks:', e);
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Failed to load tasks</td></tr>';
+            }
+        }
+
+        // Search handler
+        document.getElementById('search-input').addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (!query) return;
+
+                try {
+                    const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
+                    const results = await res.json();
+                    console.log('Search results:', results);
+                    // TODO: Display search results
+                    alert(`Found ${results.tasks.length} tasks matching "${query}"`);
+                } catch (e) {
+                    console.error('Search failed:', e);
+                }
+            }
+        });
+
+        // Initial load
+        loadStats();
+        loadBlocks();
+        loadTasks();
+
+        // Auto-refresh every 5 seconds
+        setInterval(() => {
+            loadStats();
+            loadBlocks();
+            loadTasks();
+        }, 5000);
+    </script>
+</body>
+</html>
