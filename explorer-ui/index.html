@@ -61,6 +61,7 @@
             font-weight: 700;
             color: var(--accent);
             text-decoration: none;
+            cursor: pointer;
         }
 
         .logo span {
@@ -145,10 +146,12 @@
             color: var(--accent);
             text-decoration: none;
             font-size: 0.875rem;
+            cursor: pointer;
         }
 
         .section-link:hover {
             color: var(--accent-hover);
+            text-decoration: underline;
         }
 
         /* Table */
@@ -180,15 +183,17 @@
             background: var(--bg-tertiary);
         }
 
-        .hash {
+        .hash, .link {
             font-family: 'SF Mono', Monaco, 'Courier New', monospace;
             font-size: 0.875rem;
             color: var(--accent);
+            cursor: pointer;
+            text-decoration: none;
         }
 
-        .hash:hover {
+        .hash:hover, .link:hover {
             text-decoration: underline;
-            cursor: pointer;
+            color: var(--accent-hover);
         }
 
         .badge {
@@ -217,6 +222,71 @@
         .time-ago {
             color: var(--text-muted);
             font-size: 0.875rem;
+        }
+
+        /* Detail View */
+        .detail-view {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            padding: 24px;
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: var(--border);
+        }
+
+        .detail-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            word-break: break-all;
+        }
+
+        .detail-value.mono {
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
         }
 
         /* Responsive */
@@ -270,103 +340,337 @@
             padding: 40px;
             color: var(--text-muted);
         }
+
+        /* Search Results */
+        .search-results {
+            margin-top: 24px;
+        }
+
+        .search-result-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .search-result-item:hover {
+            border-color: var(--accent);
+        }
+
+        .search-result-type {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .search-result-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
             <div class="header-content">
-                <a href="/" class="logo">Robo<span>Chain</span> Explorer</a>
+                <a class="logo" onclick="navigate('home')">Robo<span>Chain</span> Explorer</a>
                 <div class="search-box">
-                    <input type="text" id="search-input" placeholder="Search by block height, tx hash, robot ID...">
+                    <input type="text" id="search-input" placeholder="Search by block height, tx hash, task description...">
                 </div>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <!-- Stats -->
-        <div class="stats-grid" id="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="stat-blocks">-</div>
-                <div class="stat-label">Blocks</div>
+        <!-- Home View -->
+        <div id="view-home">
+            <!-- Stats -->
+            <div class="stats-grid" id="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-blocks">-</div>
+                    <div class="stat-label">Blocks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-txs">-</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-robots">-</div>
+                    <div class="stat-label">Robots</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-spaces">-</div>
+                    <div class="stat-label">Spaces</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-tasks">-</div>
+                    <div class="stat-label">Active Tasks</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-txs">-</div>
-                <div class="stat-label">Transactions</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-robots">-</div>
-                <div class="stat-label">Robots</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-spaces">-</div>
-                <div class="stat-label">Spaces</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-tasks">-</div>
-                <div class="stat-label">Active Tasks</div>
+
+            <!-- Recent Blocks -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Blocks</h2>
+                    <a class="section-link" onclick="navigate('blocks')">View all</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Height</th>
+                            <th>Hash</th>
+                            <th>Txns</th>
+                            <th>Gas</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blocks-table">
+                        <tr>
+                            <td colspan="5" class="loading">
+                                <div class="spinner"></div>
+                                Loading blocks...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Recent Tasks -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Tasks</h2>
+                    <a class="section-link" onclick="navigate('tasks')">View all</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Reward</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tasks-table">
+                        <tr>
+                            <td colspan="5" class="loading">
+                                <div class="spinner"></div>
+                                Loading tasks...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- All Blocks View -->
+        <div id="view-blocks" class="hidden">
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">All Blocks</h2>
+                    <a class="section-link" onclick="navigate('home')">Back to Dashboard</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Height</th>
+                            <th>Hash</th>
+                            <th>Txns</th>
+                            <th>Gas</th>
+                            <th>Proposer</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-blocks-table">
+                        <tr>
+                            <td colspan="6" class="loading">
+                                <div class="spinner"></div>
+                                Loading blocks...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- All Tasks View -->
+        <div id="view-tasks" class="hidden">
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">All Tasks</h2>
+                    <a class="section-link" onclick="navigate('home')">Back to Dashboard</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Reward</th>
+                            <th>Assigned Robot</th>
+                            <th>Deadline</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-tasks-table">
+                        <tr>
+                            <td colspan="7" class="loading">
+                                <div class="spinner"></div>
+                                Loading tasks...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- Block Detail View -->
+        <div id="view-block" class="hidden">
+            <div class="detail-view">
+                <div class="detail-header">
+                    <button class="back-btn" onclick="navigate('blocks')">← Back</button>
+                    <h1 class="detail-title">Block #<span id="block-height-title"></span></h1>
+                </div>
+                <div class="detail-grid">
+                    <div>
+                        <div class="detail-item">
+                            <div class="detail-label">Block Height</div>
+                            <div class="detail-value" id="block-height"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Block Hash</div>
+                            <div class="detail-value mono" id="block-hash"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Previous Hash</div>
+                            <div class="detail-value mono" id="block-prev-hash"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">State Root</div>
+                            <div class="detail-value mono" id="block-state-root"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="detail-item">
+                            <div class="detail-label">Timestamp</div>
+                            <div class="detail-value" id="block-timestamp"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Proposer</div>
+                            <div class="detail-value mono" id="block-proposer"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Transactions</div>
+                            <div class="detail-value" id="block-tx-count"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total Gas Used</div>
+                            <div class="detail-value" id="block-gas"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Recent Blocks -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">Recent Blocks</h2>
-                <a href="#" class="section-link">View all</a>
+        <!-- Task Detail View -->
+        <div id="view-task" class="hidden">
+            <div class="detail-view">
+                <div class="detail-header">
+                    <button class="back-btn" onclick="navigate('tasks')">← Back</button>
+                    <h1 class="detail-title">Task Details</h1>
+                </div>
+                <div class="detail-grid">
+                    <div>
+                        <div class="detail-item">
+                            <div class="detail-label">Task ID</div>
+                            <div class="detail-value mono" id="task-id"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Description</div>
+                            <div class="detail-value" id="task-description"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value" id="task-status"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Reward</div>
+                            <div class="detail-value" id="task-reward"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="detail-item">
+                            <div class="detail-label">Space ID</div>
+                            <div class="detail-value mono" id="task-space"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Requester</div>
+                            <div class="detail-value mono" id="task-requester"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Assigned Robot</div>
+                            <div class="detail-value mono" id="task-robot"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Required Capabilities</div>
+                            <div class="detail-value" id="task-capabilities"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <div class="detail-item">
+                        <div class="detail-label">Created At</div>
+                        <div class="detail-value" id="task-created"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Deadline</div>
+                        <div class="detail-value" id="task-deadline"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Accepted At</div>
+                        <div class="detail-value" id="task-accepted"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Completed At</div>
+                        <div class="detail-value" id="task-completed"></div>
+                    </div>
+                </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Height</th>
-                        <th>Hash</th>
-                        <th>Txns</th>
-                        <th>Gas</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody id="blocks-table">
-                    <tr>
-                        <td colspan="5" class="loading">
-                            <div class="spinner"></div>
-                            Loading blocks...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+        </div>
 
-        <!-- Recent Tasks -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">Recent Tasks</h2>
-                <a href="#" class="section-link">View all</a>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Reward</th>
-                        <th>Created</th>
-                    </tr>
-                </thead>
-                <tbody id="tasks-table">
-                    <tr>
-                        <td colspan="5" class="loading">
-                            <div class="spinner"></div>
-                            Loading tasks...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+        <!-- Search Results View -->
+        <div id="view-search" class="hidden">
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Search Results for "<span id="search-query"></span>"</h2>
+                    <a class="section-link" onclick="navigate('home')">Back to Dashboard</a>
+                </div>
+                <div id="search-results" class="search-results" style="padding: 20px;"></div>
+            </section>
+        </div>
     </main>
 
     <script>
         // API base URL
         const API_BASE = '/api/v1';
+
+        // Current view state
+        let currentView = 'home';
+        let allBlocks = [];
+        let allTasks = [];
 
         // Utility functions
         function formatNumber(n) {
@@ -389,11 +693,48 @@
             return Math.floor(seconds / 86400) + 'd ago';
         }
 
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            return new Date(timestamp * 1000).toLocaleString();
+        }
+
         function statusBadge(status) {
             const s = status.toLowerCase();
             if (s === 'completed' || s === 'active') return 'badge-success';
             if (s === 'posted' || s === 'accepted' || s === 'inprogress') return 'badge-pending';
             return 'badge-error';
+        }
+
+        // Navigation
+        function navigate(view, param) {
+            // Hide all views
+            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+
+            // Show target view
+            const viewEl = document.getElementById('view-' + view);
+            if (viewEl) {
+                viewEl.classList.remove('hidden');
+            }
+
+            currentView = view;
+
+            // Handle specific views
+            if (view === 'home') {
+                loadStats();
+                loadBlocks();
+                loadTasks();
+            } else if (view === 'blocks') {
+                loadAllBlocks();
+            } else if (view === 'tasks') {
+                loadAllTasks();
+            } else if (view === 'block' && param) {
+                loadBlockDetail(param);
+            } else if (view === 'task' && param) {
+                loadTaskDetail(param);
+            }
+
+            // Update URL hash
+            window.location.hash = param ? `${view}/${param}` : view;
         }
 
         // Fetch and render stats
@@ -418,6 +759,7 @@
             try {
                 const res = await fetch(`${API_BASE}/blocks?limit=10`);
                 const blocks = await res.json();
+                allBlocks = blocks;
 
                 if (blocks.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No blocks yet</td></tr>';
@@ -426,8 +768,8 @@
 
                 tbody.innerHTML = blocks.map(b => `
                     <tr>
-                        <td><strong>${b.height}</strong></td>
-                        <td><span class="hash">${truncateHash(b.hash)}</span></td>
+                        <td><a class="link" onclick="navigate('block', ${b.height})">${b.height}</a></td>
+                        <td><a class="hash" onclick="navigate('block', ${b.height})">${truncateHash(b.hash)}</a></td>
                         <td>${b.tx_count}</td>
                         <td>${formatNumber(b.total_gas)}</td>
                         <td class="time-ago">${timeAgo(b.timestamp)}</td>
@@ -439,12 +781,42 @@
             }
         }
 
+        // Fetch all blocks
+        async function loadAllBlocks() {
+            const tbody = document.getElementById('all-blocks-table');
+            try {
+                const res = await fetch(`${API_BASE}/blocks?limit=100`);
+                const blocks = await res.json();
+                allBlocks = blocks;
+
+                if (blocks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No blocks yet</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = blocks.map(b => `
+                    <tr>
+                        <td><a class="link" onclick="navigate('block', ${b.height})">${b.height}</a></td>
+                        <td><a class="hash" onclick="navigate('block', ${b.height})">${truncateHash(b.hash)}</a></td>
+                        <td>${b.tx_count}</td>
+                        <td>${formatNumber(b.total_gas)}</td>
+                        <td class="hash">${truncateHash(b.proposer)}</td>
+                        <td class="time-ago">${timeAgo(b.timestamp)}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load blocks:', e);
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Failed to load blocks</td></tr>';
+            }
+        }
+
         // Fetch and render tasks
         async function loadTasks() {
             const tbody = document.getElementById('tasks-table');
             try {
                 const res = await fetch(`${API_BASE}/tasks`);
                 const tasks = await res.json();
+                allTasks = tasks;
 
                 if (tasks.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No tasks yet</td></tr>';
@@ -453,7 +825,7 @@
 
                 tbody.innerHTML = tasks.slice(0, 10).map(t => `
                     <tr>
-                        <td><span class="hash">${truncateHash(t.id)}</span></td>
+                        <td><a class="hash" onclick="navigate('task', '${encodeURIComponent(t.id)}')">${truncateHash(t.id)}</a></td>
                         <td>${t.description.slice(0, 50)}${t.description.length > 50 ? '...' : ''}</td>
                         <td><span class="badge ${statusBadge(t.status)}">${t.status}</span></td>
                         <td>${(t.reward / 1000000).toFixed(2)} ROUSD</td>
@@ -466,34 +838,200 @@
             }
         }
 
-        // Search handler
-        document.getElementById('search-input').addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                const query = e.target.value.trim();
-                if (!query) return;
+        // Fetch all tasks
+        async function loadAllTasks() {
+            const tbody = document.getElementById('all-tasks-table');
+            try {
+                const res = await fetch(`${API_BASE}/tasks`);
+                const tasks = await res.json();
+                allTasks = tasks;
 
-                try {
-                    const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
-                    const results = await res.json();
-                    console.log('Search results:', results);
-                    // TODO: Display search results
-                    alert(`Found ${results.tasks.length} tasks matching "${query}"`);
-                } catch (e) {
-                    console.error('Search failed:', e);
+                if (tasks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No tasks yet</td></tr>';
+                    return;
                 }
+
+                tbody.innerHTML = tasks.map(t => `
+                    <tr>
+                        <td><a class="hash" onclick="navigate('task', '${encodeURIComponent(t.id)}')">${truncateHash(t.id)}</a></td>
+                        <td>${t.description.slice(0, 40)}${t.description.length > 40 ? '...' : ''}</td>
+                        <td><span class="badge ${statusBadge(t.status)}">${t.status}</span></td>
+                        <td>${(t.reward / 1000000).toFixed(2)} ROUSD</td>
+                        <td>${t.assigned_robot ? truncateHash(t.assigned_robot) : 'None'}</td>
+                        <td>${t.deadline ? formatDate(t.deadline) : 'None'}</td>
+                        <td class="time-ago">${timeAgo(t.created_at)}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load tasks:', e);
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Failed to load tasks</td></tr>';
+            }
+        }
+
+        // Load block detail
+        async function loadBlockDetail(height) {
+            try {
+                const res = await fetch(`${API_BASE}/blocks/${height}`);
+                if (!res.ok) {
+                    navigate('blocks');
+                    return;
+                }
+                const block = await res.json();
+
+                document.getElementById('block-height-title').textContent = block.height;
+                document.getElementById('block-height').textContent = block.height;
+                document.getElementById('block-hash').textContent = block.hash;
+                document.getElementById('block-prev-hash').textContent = block.prev_hash;
+                document.getElementById('block-state-root').textContent = block.state_root;
+                document.getElementById('block-timestamp').textContent = formatDate(block.timestamp);
+                document.getElementById('block-proposer').textContent = block.proposer;
+                document.getElementById('block-tx-count').textContent = block.tx_count;
+                document.getElementById('block-gas').textContent = formatNumber(block.total_gas);
+            } catch (e) {
+                console.error('Failed to load block:', e);
+                navigate('blocks');
+            }
+        }
+
+        // Load task detail
+        async function loadTaskDetail(taskId) {
+            try {
+                // Find task from cached list
+                const task = allTasks.find(t => t.id === decodeURIComponent(taskId));
+                if (!task) {
+                    // Reload tasks and try again
+                    const res = await fetch(`${API_BASE}/tasks`);
+                    allTasks = await res.json();
+                    const foundTask = allTasks.find(t => t.id === decodeURIComponent(taskId));
+                    if (!foundTask) {
+                        navigate('tasks');
+                        return;
+                    }
+                    displayTask(foundTask);
+                } else {
+                    displayTask(task);
+                }
+            } catch (e) {
+                console.error('Failed to load task:', e);
+                navigate('tasks');
+            }
+        }
+
+        function displayTask(task) {
+            document.getElementById('task-id').textContent = task.id;
+            document.getElementById('task-description').textContent = task.description;
+            document.getElementById('task-status').innerHTML = `<span class="badge ${statusBadge(task.status)}">${task.status}</span>`;
+            document.getElementById('task-reward').textContent = (task.reward / 1000000).toFixed(2) + ' ROUSD';
+            document.getElementById('task-space').textContent = task.space_id;
+            document.getElementById('task-requester').textContent = task.requester;
+            document.getElementById('task-robot').textContent = task.assigned_robot || 'Not assigned';
+            document.getElementById('task-capabilities').textContent = task.required_capabilities.join(', ') || 'None';
+            document.getElementById('task-created').textContent = formatDate(task.created_at);
+            document.getElementById('task-deadline').textContent = task.deadline ? formatDate(task.deadline) : 'None';
+            document.getElementById('task-accepted').textContent = task.accepted_at ? formatDate(task.accepted_at) : 'Not accepted';
+            document.getElementById('task-completed').textContent = task.completed_at ? formatDate(task.completed_at) : 'Not completed';
+        }
+
+        // Search handler
+        async function performSearch(query) {
+            if (!query.trim()) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
+                const results = await res.json();
+
+                document.getElementById('search-query').textContent = query;
+
+                const container = document.getElementById('search-results');
+                let html = '';
+
+                // Check if query is a block height
+                if (/^\d+$/.test(query)) {
+                    html += `
+                        <div class="search-result-item" onclick="navigate('block', ${query})">
+                            <div class="search-result-type">Block</div>
+                            <div class="search-result-title">Block #${query}</div>
+                            <div class="search-result-desc">Click to view block details</div>
+                        </div>
+                    `;
+                }
+
+                // Display task results
+                if (results.tasks && results.tasks.length > 0) {
+                    results.tasks.forEach(t => {
+                        html += `
+                            <div class="search-result-item" onclick="navigate('task', '${encodeURIComponent(t.id)}')">
+                                <div class="search-result-type">Task</div>
+                                <div class="search-result-title">${t.description.slice(0, 60)}${t.description.length > 60 ? '...' : ''}</div>
+                                <div class="search-result-desc">Status: ${t.status} | Reward: ${(t.reward / 1000000).toFixed(2)} ROUSD</div>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (!html) {
+                    html = '<div class="empty-state">No results found</div>';
+                }
+
+                container.innerHTML = html;
+                navigate('search');
+                document.getElementById('view-search').classList.remove('hidden');
+
+            } catch (e) {
+                console.error('Search failed:', e);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch(e.target.value);
+            }
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.slice(1);
+            if (!hash || hash === 'home') {
+                navigate('home');
+            } else if (hash.startsWith('block/')) {
+                navigate('block', hash.split('/')[1]);
+            } else if (hash.startsWith('task/')) {
+                navigate('task', hash.split('/')[1]);
+            } else if (hash === 'blocks') {
+                navigate('blocks');
+            } else if (hash === 'tasks') {
+                navigate('tasks');
             }
         });
 
         // Initial load
-        loadStats();
-        loadBlocks();
-        loadTasks();
-
-        // Auto-refresh every 5 seconds
-        setInterval(() => {
+        const initialHash = window.location.hash.slice(1);
+        if (initialHash && initialHash !== 'home') {
+            if (initialHash.startsWith('block/')) {
+                navigate('block', initialHash.split('/')[1]);
+            } else if (initialHash.startsWith('task/')) {
+                navigate('task', initialHash.split('/')[1]);
+            } else if (initialHash === 'blocks') {
+                navigate('blocks');
+            } else if (initialHash === 'tasks') {
+                navigate('tasks');
+            } else {
+                navigate('home');
+            }
+        } else {
             loadStats();
             loadBlocks();
             loadTasks();
+        }
+
+        // Auto-refresh every 5 seconds (only on home view)
+        setInterval(() => {
+            if (currentView === 'home') {
+                loadStats();
+                loadBlocks();
+                loadTasks();
+            }
         }, 5000);
     </script>
 </body>
